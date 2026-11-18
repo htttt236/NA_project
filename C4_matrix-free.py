@@ -35,22 +35,22 @@ def apply_A(u, n):
 
     reshaped_u = u.reshape(n-1,n-1)         # (n-1) by (n-1) reshape
     padded_u = np.pad(reshaped_u, 1)        # 0-padding
-    b = np.array([])
+    # b = np.array([])
 
-    for i in range(1, n):
-        for j in range(1, n):
-            b = np.append(b, 4*padded_u[i, j] - padded_u[i-1, j]
-                          - padded_u[i+1, j] - padded_u[i, j-1] - padded_u[i, j+1])
-    return b
+    # for i in range(1, n):
+    #     for j in range(1, n):
+    #         b = np.append(b, 4*padded_u[i, j] - padded_u[i-1, j]
+    #                       - padded_u[i+1, j] - padded_u[i, j-1] - padded_u[i, j+1])
+    # return b
 
-    # padded_u = np.pad(u, 1)
-    # return (
-    #     4 * u
-    #     - padded_u[1:-1, :-2]   #left
-    #     - padded_u[1:-1, 2:]    #right
-    #     - padded_u[:-2, 1:-1]   #up
-    #     - padded_u[2:, 1:-1]    #down
-    # )
+
+    return (
+        4 * reshaped_u
+        - padded_u[1:-1, :-2]   #left
+        - padded_u[1:-1, 2:]    #right
+        - padded_u[:-2, 1:-1]   #up
+        - padded_u[2:, 1:-1]    #down
+    ).reshape((n-1)**2)
 
 
 def apply_dense_A(u, n):
@@ -67,7 +67,10 @@ for i in range(3):
     u = rng.integers(low=0, high=10, size=(n-1)**2)
     print("u:")
     print(u)
+    A1 = apply_A(u, n)
+    A2 = apply_dense_A(u, n)
     print("matrix-free method:")
-    print(apply_A(u, n))
+    print(A1)
     print("dense matrix method:")
-    print(apply_dense_A(u, n))
+    print(A2)
+    print(np.array_equal(A1, A2))
