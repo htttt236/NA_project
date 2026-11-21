@@ -3,7 +3,7 @@ import numpy as np
 
 def _check_n_size(n):
     if n<3:
-        raise ValueError(f"error: too small n. (n: {n})")
+        raise RuntimeError(f"error: too small n. (n: {n})")
 
 def _make_A(n):
     # m = (n-1)**2
@@ -65,6 +65,7 @@ rng = np.random.default_rng(seed=0)
 for i in range(3):
     n = rng.integers(low=3, high=8, size=1).item()
     u = rng.integers(low=0, high=10, size=(n-1)**2)
+    #u = rng.uniform(low=0, high=10, size=(n-1)**2)
     print("u:")
     print(u)
     A1 = apply_A(u, n)
