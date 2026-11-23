@@ -26,7 +26,7 @@ for n in n_list:
     print(f"{sor_it[-1]:>10d} ", end="", flush=True)
     u, converged, history_cg = methods.cg(b,n)              ; cg_it.append(len(history_cg) - 1)
     print(f"{cg_it[-1]:>10d} ", end="", flush=True)
-    u, converged, history_pcg = methods.pcg_ssor(b,n)            ; pcg_it.append(len(history_cg) - 1)
+    u, converged, history_pcg = methods.pcg_ssor(b,n)       ; pcg_it.append(len(history_cg) - 1)
     print(f"{pcg_it[-1]:>10d} ", flush=True)
 
 iterations ={
@@ -42,13 +42,15 @@ line = {
     "Gauss-Seidel": '^-',
     "SOR": 'v--',
     "CG": 's-',
-    "PCG": 'x--',
+    "PCG": 'kx--',
 }
 
 for name, it in iterations.items():
     plt.loglog(n_list, it, line[name], label=name)
 
 plt.xlabel("n")
+plt.xticks(ticks=n_list, labels=[str(n) for n in n_list])
+plt.minorticks_off()
 plt.ylabel("iteration")
 plt.legend()
 plt.savefig('fig_C9_1.png', dpi=300)
