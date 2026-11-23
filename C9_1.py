@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 rng = np.random.default_rng(seed=0)
 
+n_list = [8, 16, 32, 64, 128]
 jacobi_it = []
 gs_it = []
 sor_it = []
@@ -12,7 +13,7 @@ pcg_it = []
 
 # print table
 print(f"      {'jacobi':>10} {'gs':>10} {'sor':>10} {'cg':>10} {'pcg':>10}")
-for n in [8, 16, 32, 64, 128]:
+for n in n_list:
     m = (n-1)**2
     b = rng.uniform(low=0, high=50, size=m)
 
@@ -27,3 +28,28 @@ for n in [8, 16, 32, 64, 128]:
     print(f"{cg_it[-1]:>10d} ", end="", flush=True)
     u, converged, history_pcg = methods.pcg_ssor(b,n)            ; pcg_it.append(len(history_cg) - 1)
     print(f"{pcg_it[-1]:>10d} ", flush=True)
+
+iterations ={
+    "Jacobi": jacobi_it,
+    "Gauss-Seidel": gs_it,
+    "SOR": sor_it,
+    "CG": cg_it,
+    "PCG": pcg_it
+}
+
+line = {
+    "Jacobi": 'o-',
+    "Gauss-Seidel": '^-',
+    "SOR": 'v--',
+    "CG": 's-',
+    "PCG": 'x--',
+}
+
+for name, it in iterations.items():
+    plt.loglog(n_list, it, line[name], label=name)
+
+plt.xlabel("n")
+plt.ylabel("iteration")
+plt.legend()
+plt.savefig('fig_C9_1.png', dpi=300)
+plt.show()
