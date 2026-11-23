@@ -30,16 +30,21 @@ def apply_dense_A(u, n):
 
 #============================== C5: banded-cholesky ===============================
 
-def make_banded_A(n):              # A의 대각 아래 band만 생성
-    _check_n_size(n)
+def make_banded_A(n):               # A의 대각 아래 band만 생성
+    n_ = n -1
+    m = n_ * n_
+    A = np.zeros((m, n))
 
-    A = np.zeros((n-1, n-1, n))
-    
-    A[:, :, 0] = 4
-    A[:, 1:, 1] = -1
-    A[1:, :, n-1] = -1
-    
-    return A.reshape((n-1)**2, n)
+    for r in range(n_):
+        for c in range(n_):
+            i = r*n_ + c
+            A[i,0] = 4
+
+            if c>0:
+                A[i,1] = -1
+            if r>0:
+                A[i,n_] = -1
+    return A
 
 def cholesky_decomposition(banded_A):
     m, n = banded_A.shape

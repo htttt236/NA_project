@@ -1,31 +1,31 @@
 import numpy as np
 
 
-# def make_A_in_band(n):
-#     q = n -1
-#     m = q*q
-#     A = np.zeros((m,n))
+def make_banded_A(n):               # A의 대각 아래 band만 생성
+    n_ = n -1
+    m = n_ * n_
+    A = np.zeros((m, n))
 
-#     for r in range(q):
-#         for c in range(q):
-#             i = r*q + c
-#             A[i,0] = 4
+    for r in range(n_):
+        for c in range(n_):
+            i = r*n_ + c
+            A[i,0] = 4
 
-#             if c>0:
-#                 A[i,1] = -1
-#             if r>0:
-#                 A[i,q] = -1
-#     return A
+            if c>0:
+                A[i,1] = -1
+            if r>0:
+                A[i,n_] = -1
+    return A
 
 
-def make_A_in_band(n):              # A의 대각 아래 band만 생성
-    A = np.zeros((n-1, n-1, n))
+# def make_banded_A(n):               # A의 대각 아래 band만 생성
+#     A = np.zeros((n-1, n-1, n))
     
-    A[:, :, 0] = 4
-    A[:, 1:, 1] = -1
-    A[1:, :, n-1] = -1
+#     A[:, :, 0] = 4
+#     A[:, 1:, 1] = -1
+#     A[1:, :, n-1] = -1
     
-    return A.reshape((n-1)**2, n)
+#     return A.reshape((n-1)**2, n)
 
 
 def cholesky_decomposition(A):
@@ -90,7 +90,7 @@ def make_dense_A(A):
 
 for n in [3, 4, 8]:
 
-    A = make_A_in_band(n)
+    A = make_banded_A(n)
     L = cholesky_decomposition(A)
 
     A_ = make_dense_A(A)
