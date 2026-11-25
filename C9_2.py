@@ -11,7 +11,7 @@ w = 1.0
 iterations = []
 
 while w < 2.0:
-    u, converged, history = methods.sor(b, n, w=w)
+    u, converged, history = methods.sor_rb(b, n, w=w)
     iterations.append(len(history) - 1)
 
     w_new = w + w_step
