@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 rng = np.random.default_rng(seed=0)
 
-n_list = [8, 16, 32, 64, 128]
+n_list = [8, 16, 32, 64, 128, 256]
 jacobi_it = []
 gs_it = []
 sor_it = []
@@ -20,15 +20,18 @@ for n in n_list:
     print(f"n={n:<3d} ", end="", flush=True)
     u, converged, history_jacobi = methods.jacobi(b, n)     ; jacobi_it.append(len(history_jacobi) - 1)
     print(f"{jacobi_it[-1]:>10d} ", end="", flush=True)
-    u, converged, history_gs = methods.gs_lex(b,n)          ; gs_it.append(len(history_gs) - 1)
+    u, converged, history_gs = methods.gs_rb(b,n)          ; gs_it.append(len(history_gs) - 1)
     print(f"{gs_it[-1]:>10d} ", end="", flush=True)
-    u, converged, history_sor = methods.sor(b,n)            ; sor_it.append(len(history_sor) - 1)
+    u, converged, history_sor = methods.sor_rb(b,n)            ; sor_it.append(len(history_sor) - 1)
     print(f"{sor_it[-1]:>10d} ", end="", flush=True)
     u, converged, history_cg = methods.cg(b,n)              ; cg_it.append(len(history_cg) - 1)
     print(f"{cg_it[-1]:>10d} ", end="", flush=True)
     u, converged, history_pcg = methods.pcg_ssor(b,n)       ; pcg_it.append(len(history_pcg) - 1)
     print(f"{pcg_it[-1]:>10d} ", flush=True)
 
+
+
+# print graph
 iterations ={
     "Jacobi": jacobi_it,
     "Gauss-Seidel": gs_it,

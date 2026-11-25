@@ -99,7 +99,7 @@ def jacobi(b, n, tol=1e-8, maxit=10**6):
         reshaped_u = u.reshape(n-1, n-1)
         padded_u = np.pad(reshaped_u, 1)
         return (
-            padded_u[1:-1, :-2]   #left
+            padded_u[1:-1, :-2]     #left
             + padded_u[1:-1, 2:]    #right
             + padded_u[:-2, 1:-1]   #up
             + padded_u[2:, 1:-1]    #down
@@ -124,7 +124,7 @@ def jacobi(b, n, tol=1e-8, maxit=10**6):
     return u, False, history
 
 
-def sor(b, n, w=None, tol=1e-8, maxit=10**6):
+def sor_lex(b, n, w=None, tol=1e-8, maxit=10**6):
     _check_n_size(n)
     if w is None:
         w = 2.0 / (1.0 + np.sin(np.pi/n))
@@ -155,7 +155,62 @@ def sor(b, n, w=None, tol=1e-8, maxit=10**6):
     return u[1:-1, 1:-1].reshape(-1), False, history
 
 def gs_lex(b, n, tol=1e-8, maxit=10**6):
-    return sor(b, n, w=1.0)
+    return sor_lex(b, n, w=1.0, tol=tol, maxit=maxit)
+
+def sor_rb(b, n, w=None, tol=1e-8, maxit=10**6):
+    _check_n_size(n)
+    if w is None:
+        w = 2.0 / (1.0 + np.sin(np.pi/n))
+
+    b_norm = np.linalg.norm(b)
+    if b_norm == 0:
+        return np.zeros_like(b), True, [0.0]
+    history = [1.0]
+    b = b.reshape(n-1,n-1)
+    u = np.zeros_like(b).reshape(n-1,n-1)
+    u = np.pad(u, 1)
+
+    for i in range(maxit):
+        # update red
+        u[1:-1:2, 1:-1:2] = (1-w)*u[1:-1:2, 1:-1:2] + w*0.25*(
+            b[::2, ::2]             # b is not padded
+            + u[:-2:2, 1:-1:2]      # up
+            + u[2::2, 1:-1:2]       # down
+            + u[1:-1:2, :-2:2]      # left
+            + u[1:-1:2, 2::2]       # right
+        )
+        u[2:-1:2, 2:-1:2] = (1-w)*u[2:-1:2, 2:-1:2] + w*0.25*(
+            b[1::2, 1::2]       # b is not padded
+            + u[1:-2:2, 2:-1:2]     # up
+            + u[3::2, 2:-1:2]     # down
+            + u[2:-1:2, 1:-2:2]     # left
+            + u[2:-1:2, 3::2]     # right
+        )
+        # update black
+        u[1:-1:2, 2:-1:2] = (1-w)*u[1:-1:2, 2:-1:2] + w*0.25*(
+            b[::2, 1::2]          # b is not padded
+            + u[:-2:2, 2:-1:2]      # up
+            + u[2::2, 2:-1:2]       # down
+            + u[1:-1:2, 1:-2:2]     # left
+            + u[1:-1:2, 3::2]     # right
+        )
+        u[2:-1:2, 1:-1:2] = (1-w)*u[2:-1:2, 1:-1:2] + w*0.25*(
+            b[1::2, ::2]          # b is not padded
+            + u[1:-2:2, 1:-1:2]     # up
+            + u[3::2, 1:-1:2]     # down
+            + u[2:-1:2, :-2:2]      # left
+            + u[2:-1:2, 2::2]       # right
+        )
+
+        residual = np.linalg.norm(apply_A(u[1:-1, 1:-1].reshape(-1), n) - b.reshape(-1)) / b_norm
+        history.append(residual)
+        if residual < tol:
+            return u[1:-1, 1:-1].reshape(-1), True, history
+
+    return u[1:-1, 1:-1].reshape(-1), False, history
+
+def gs_rb(b, n, tol=1e-8, maxit=10**6):
+    return sor_rb(b, n, w=1.0, tol=tol, maxit=maxit)
 
 def cg(b, n, tol=1e-8, maxit=10**6):
     _check_n_size(n)

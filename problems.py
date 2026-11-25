@@ -42,8 +42,8 @@ for i in range(3):
     answer = np.linalg.solve(methods.make_A(n), b)
     answer_norm = np.linalg.norm(answer)
     u, converged_jacobi, history_jacobi  = methods.jacobi(b, n);    diff_jacobi = np.linalg.norm(answer - u) / answer_norm
-    u, converged_gs, history_gs = methods.gs_lex(b, n);             diff_gs = np.linalg.norm(answer - u) / answer_norm
-    u, converged_sor, history_sor= methods.sor(b, n);               diff_sor = np.linalg.norm(answer - u) / answer_norm
+    u, converged_gs, history_gs = methods.gs_rb(b, n);             diff_gs = np.linalg.norm(answer - u) / answer_norm
+    u, converged_sor, history_sor= methods.sor_rb(b, n);               diff_sor = np.linalg.norm(answer - u) / answer_norm
     u, converged_cg, history_cg = methods.cg(b, n);                 diff_cg = np.linalg.norm(answer - u) / answer_norm
     print(f"{i+1:>5d}", end="")
     print(f" {n:>3d} {'jacobi':>8} {history_jacobi[-1]:>12.4e} {diff_jacobi:>15.4e} {len(history_jacobi)-1:>10d} {str(converged_jacobi):>12}")
