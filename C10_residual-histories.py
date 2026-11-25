@@ -29,12 +29,19 @@ line = {
     "PCG": '--',
 }
 
+fig, ax = plt.subplots(1, 2, figsize=(10,3.5))
+
 for name, history in histories.items():
     iterations = range(len(history))
-    plt.semilogy(iterations, history, line[name], label=name)
+    ax[0].semilogy(iterations, history, line[name], label=name)
 
-plt.xlabel("iteration")
-plt.ylabel("relative residual")
-plt.legend()
-plt.savefig('fig_C10.png', dpi=300)
+ax[0].set_xlabel("iteration")
+ax[0].set_ylabel("relative residual")
+ax[0].legend()
+
+for name in ["SOR", "CG", "PCG"]:
+    ax[1].semilogy(range(len(histories[name])), histories[name], line[name], label=name)
+
+ax[1].legend()
+fig.savefig('fig_C10.png', dpi=300)
 plt.show()
